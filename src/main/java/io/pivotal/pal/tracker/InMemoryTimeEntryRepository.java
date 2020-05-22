@@ -1,5 +1,7 @@
 package io.pivotal.pal.tracker;
 
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,12 +10,24 @@ import java.util.concurrent.TimeUnit;
 
 public class InMemoryTimeEntryRepository implements  TimeEntryRepository {
     Map<Long,TimeEntry> timeRepo = new HashMap<>();
+    private  long timeEntryId = 0L ;
 
+    private  synchronized Long incrementTid(){
+        this.timeEntryId ++ ;
+        return this.timeEntryId ;
+    }
 
     @Override
     public TimeEntry create(TimeEntry timeEntry) {
-        timeRepo.put(timeEntry.getId(),timeEntry);
-        return timeEntry;
+        long id = 0L ;
+        if(StringUtils.isEmpty(timeEntry.getId())|| timeEntry.getId() == 0L ) {
+            id = incrementTid();
+            timeEntry.setId(id);
+        }else{
+            id = timeEntry.getId();
+        }
+        timeRepo.put(id,timeEntry);
+        return timeRepo.get(id);
     }
 
     @Override
@@ -24,12 +38,13 @@ public class InMemoryTimeEntryRepository implements  TimeEntryRepository {
     @Override
     public TimeEntry update(long id, TimeEntry timeEntry) {
         if(timeRepo.containsKey(id)) {
+            timeEntry.setId(id);
             timeRepo.put(id, timeEntry);
         }
         else{
             return null ;
             }
-        return timeEntry;
+        return timeRepo.get(id);
     }
 
     @Override

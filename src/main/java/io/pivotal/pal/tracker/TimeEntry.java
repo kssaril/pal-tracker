@@ -1,10 +1,29 @@
 package io.pivotal.pal.tracker;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class TimeEntry {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeEntry timeEntry = (TimeEntry) o;
+        return id == timeEntry.id &&
+                projectId == timeEntry.projectId &&
+                userId == timeEntry.userId &&
+                hours == timeEntry.hours &&
+                Objects.equals(date, timeEntry.date);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, projectId, userId, date, hours);
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     private long id;
     private long projectId;
