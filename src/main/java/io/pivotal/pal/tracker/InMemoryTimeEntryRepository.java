@@ -23,7 +23,12 @@ public class InMemoryTimeEntryRepository implements  TimeEntryRepository {
 
     @Override
     public TimeEntry update(long id, TimeEntry timeEntry) {
-        timeRepo.put(id,timeEntry);
+        if(timeRepo.containsKey(id)) {
+            timeRepo.put(id, timeEntry);
+        }
+        else{
+            return null ;
+            }
         return timeEntry;
     }
 
